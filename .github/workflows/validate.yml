@@ -1,0 +1,31 @@
+name: Validate OWSF
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate core schema JSON syntax
+        run: jq . schemas/owsf-core-v0.1.schema.json >/dev/null
+
+      - name: Validate examples
+        run: |
+          set -euo pipefail
+          files=(examples/*.json)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No example JSON files found in examples/."
+            exit 1
+          fi
+
+          for f in "${files[@]}"; do
+            echo "Validating $f"
+            jq . "$f" >/dev/null
+            python3 scripts/validate_owsf_semantics.py "$f"
+          done
