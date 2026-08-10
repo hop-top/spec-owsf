@@ -7,7 +7,7 @@ This profile layers on the OWSF Core Specification v0.1 (`docs/spec/owsf-core-v0
 
 ## 1. Purpose
 
-OWSF core leaves `events[*].payload` unconstrained: artifacts replay deterministically, but consumers cannot interpret agent activity portably. This profile defines payload semantics for the agent interaction loop — sessions, model turns, tool invocations, plans, and context compaction — the event domain OCSF has no classes for.
+OWSF core leaves `events[*].payload` unconstrained: artifacts replay deterministically, but consumers cannot interpret agent activity portably. This profile defines payload semantics for the agent interaction loop — sessions, model turns, tool invocations, plans, context compaction, and cross-document context injection — the event domain OCSF has no classes for.
 
 ## 2. Profile Identifier and Versioning
 
@@ -41,6 +41,7 @@ This is an **open** profile.
 | `tool.result` | The outcome of a prior tool invocation. |
 | `plan.update` | A full snapshot of the agent's current plan. |
 | `context.summary` | A compaction summary standing in for a range of prior events. |
+| `context.inject` | Content from another document entered this session's context. |
 | `topology.space_create` | A space came into existence (root or child). |
 
 ## 5. Payload Definitions
@@ -83,8 +84,9 @@ All fields not marked required are optional. Every payload additionally allows `
 | `tool` | yes | string | Tool name. |
 | `arguments` | no | object | Tool arguments. |
 | `call_id` | no | string | Correlation id matched by `tool.result`. |
+| `child_doc_id` | no | string | `doc_id` of a document this call dispatched. |
 
-`tool` is required because an invocation without a tool name is uninterpretable. `arguments` is optional: some tools take none.
+`tool` is required because an invocation without a tool name is uninterpretable. `arguments` is optional: some tools take none. When a call spawns another OWSF document (sub-agent dispatch), `child_doc_id` `SHOULD` name it; the child's `dispatched_from` (core Section 8.2) `SHOULD` point back at this event.
 
 ### 5.5 `tool.result`
 
@@ -93,8 +95,9 @@ All fields not marked required are optional. Every payload additionally allows `
 | `status` | yes | string enum: `success`, `error`, `timeout`, `cancelled` | Invocation outcome. |
 | `output` | no | any | Tool output. |
 | `call_id` | no | string | Correlation id of the originating `tool.call`. |
+| `child_doc_id` | no | string | `doc_id` of the document the invocation dispatched. |
 
-`status` is required so consumers can replay control flow without parsing `output`.
+`status` is required so consumers can replay control flow without parsing `output`. `child_doc_id` mirrors the same field on `tool.call` for producers that only learn the child's identity at completion.
 
 ### 5.6 `plan.update`
 
@@ -113,7 +116,19 @@ Each step object requires `title` (string) and `status` (string enum: `pending`,
 
 `covers` is `OPTIONAL`: many source formats do not record the summarized range, and producers `MUST NOT` fabricate one. Producers `SHOULD` emit `covers` when the range is known. A summary without `covers` is annotative only and `MUST NOT` substitute for the summarized events during replay; when `covers` is present, consumers `MAY` treat the summary as standing in for that range. Consumers `SHOULD` verify the referenced events exist; JSON Schema cannot.
 
-### 5.8 `topology.space_create`
+### 5.8 `context.inject`
+
+| Field | Required | Type | Meaning |
+|---|---|---|---|
+| `source_doc_id` | yes | string | `doc_id` of the document the content came from. |
+| `from_event_id` | no | string | First event of the injected range in the source document. |
+| `to_event_id` | no | string | Last event of the injected range in the source document. |
+| `content` | no | any | The injected content, materialized. |
+| `content_hash` | no | string | Hash of the injected content when `content` is omitted. |
+
+Injection is recorded as an event, never as structural splicing: core's no-merge invariant (Section 8.3) and self-contained replay both survive because the event carries what entered the context. Producers `SHOULD` materialize `content`; when it is omitted, replay determinism degrades and the export `SHOULD` declare it (`export.determinism` of `best_effort` or `none`, core Section 9), with `content_hash` enabling out-of-band verification. `source_doc_id` records provenance only: consumers `MUST NOT` require the source document to replay this one.
+
+### 5.9 `topology.space_create`
 
 | Field | Required | Type | Meaning |
 |---|---|---|---|
@@ -136,4 +151,4 @@ The profile schema is a single whole-document schema that constrains only `event
 
 ## 9. Worked Example
 
-`examples/agent-loop-owsf.json` records a complete loop — `session.start`, a user/assistant exchange, a tool call and result, a plan update, a context summary, `session.end` — plus the root `topology.space_create` event. It is valid against the core schema, the semantic validator, and this profile.
+`examples/agent-loop-owsf.json` records a complete loop — `session.start`, a `context.inject` carrying prior-session context, a user/assistant exchange, a tool call and result, a plan update, a context summary, `session.end` — plus the root `topology.space_create` event. The document itself declares `dispatched_from` (core Section 8.2). It is valid against the core schema, the semantic validator, and this profile.

@@ -6,6 +6,10 @@
     "name": "wsm",
     "version": "0.1.0"
   },
+  "dispatched_from": {
+    "parent_doc_id": "owsf_orchestrator_2026_08_10_000",
+    "parent_event_id": "evt_dispatch_042"
+  },
   "writers": [
     {
       "writer_id": "wsm:agent",
@@ -63,27 +67,45 @@
       "event_id": "evt_003",
       "writer_id": "wsm:agent",
       "space_id": "root",
-      "type": "message.user",
+      "type": "context.inject",
       "lamport": 3,
       "seq": 3,
-      "timestamp": "2026-08-10T09:00:05Z",
+      "timestamp": "2026-08-10T09:00:02Z",
       "depends_on": [
         "evt_002"
       ],
       "payload": {
-        "content": "The auth test fails intermittently in CI. Can you find out why?"
+        "source_doc_id": "owsf_agent_loop_demo_2026_08_09_007",
+        "from_event_id": "evt_040",
+        "to_event_id": "evt_052",
+        "content": "Prior session diagnosis: auth test flakiness correlates with unseeded RNG in test fixtures."
       }
     },
     {
       "event_id": "evt_004",
       "writer_id": "wsm:agent",
       "space_id": "root",
-      "type": "message.assistant",
+      "type": "message.user",
       "lamport": 4,
       "seq": 4,
-      "timestamp": "2026-08-10T09:00:09Z",
+      "timestamp": "2026-08-10T09:00:05Z",
       "depends_on": [
         "evt_003"
+      ],
+      "payload": {
+        "content": "The auth test fails intermittently in CI. Can you find out why?"
+      }
+    },
+    {
+      "event_id": "evt_005",
+      "writer_id": "wsm:agent",
+      "space_id": "root",
+      "type": "message.assistant",
+      "lamport": 5,
+      "seq": 5,
+      "timestamp": "2026-08-10T09:00:09Z",
+      "depends_on": [
+        "evt_004"
       ],
       "payload": {
         "content": "I will read the test file first to look for order or timing dependence.",
@@ -92,15 +114,15 @@
       }
     },
     {
-      "event_id": "evt_005",
+      "event_id": "evt_006",
       "writer_id": "wsm:agent",
       "space_id": "root",
       "type": "tool.call",
-      "lamport": 5,
-      "seq": 5,
+      "lamport": 6,
+      "seq": 6,
       "timestamp": "2026-08-10T09:00:10Z",
       "depends_on": [
-        "evt_004"
+        "evt_005"
       ],
       "payload": {
         "tool": "read_file",
@@ -111,15 +133,15 @@
       }
     },
     {
-      "event_id": "evt_006",
+      "event_id": "evt_007",
       "writer_id": "wsm:agent",
       "space_id": "root",
       "type": "tool.result",
-      "lamport": 6,
-      "seq": 6,
+      "lamport": 7,
+      "seq": 7,
       "timestamp": "2026-08-10T09:00:11Z",
       "depends_on": [
-        "evt_005"
+        "evt_006"
       ],
       "payload": {
         "status": "success",
@@ -131,15 +153,15 @@
       }
     },
     {
-      "event_id": "evt_007",
+      "event_id": "evt_008",
       "writer_id": "wsm:agent",
       "space_id": "root",
       "type": "plan.update",
-      "lamport": 7,
-      "seq": 7,
+      "lamport": 8,
+      "seq": 8,
       "timestamp": "2026-08-10T09:00:15Z",
       "depends_on": [
-        "evt_006"
+        "evt_007"
       ],
       "payload": {
         "steps": [
@@ -159,34 +181,34 @@
       }
     },
     {
-      "event_id": "evt_008",
+      "event_id": "evt_009",
       "writer_id": "wsm:agent",
       "space_id": "root",
       "type": "context.summary",
-      "lamport": 8,
-      "seq": 8,
+      "lamport": 9,
+      "seq": 9,
       "timestamp": "2026-08-10T09:00:20Z",
       "depends_on": [
-        "evt_007"
+        "evt_008"
       ],
       "payload": {
-        "summary": "User reported an intermittently failing auth test. The test seeds login with random.random(); plan is to pin the seed and re-run the suite.",
+        "summary": "User reported an intermittently failing auth test. Prior-session context and the test source both point at an unseeded RNG; plan is to pin the seed and re-run the suite.",
         "covers": {
           "from_event_id": "evt_002",
-          "to_event_id": "evt_007"
+          "to_event_id": "evt_008"
         }
       }
     },
     {
-      "event_id": "evt_009",
+      "event_id": "evt_010",
       "writer_id": "wsm:agent",
       "space_id": "root",
       "type": "session.end",
-      "lamport": 9,
-      "seq": 9,
+      "lamport": 10,
+      "seq": 10,
       "timestamp": "2026-08-10T09:00:25Z",
       "depends_on": [
-        "evt_008"
+        "evt_009"
       ],
       "payload": {
         "reason": "completed",

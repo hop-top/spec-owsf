@@ -183,6 +183,25 @@
             "if": {
               "properties": {
                 "type": {
+                  "const": "context.inject"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/context_inject"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
                   "const": "topology.space_create"
                 }
               },
@@ -311,6 +330,10 @@
           "type": "string",
           "minLength": 1
         },
+        "child_doc_id": {
+          "type": "string",
+          "minLength": 1
+        },
         "raw": {
           "$ref": "#/$defs/raw"
         }
@@ -333,6 +356,10 @@
         },
         "output": {},
         "call_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "child_doc_id": {
           "type": "string",
           "minLength": 1
         },
@@ -403,6 +430,34 @@
               "minLength": 1
             }
           }
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    },
+    "context_inject": {
+      "type": "object",
+      "required": [
+        "source_doc_id"
+      ],
+      "properties": {
+        "source_doc_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "from_event_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "to_event_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content": {},
+        "content_hash": {
+          "type": "string",
+          "minLength": 1
         },
         "raw": {
           "$ref": "#/$defs/raw"
