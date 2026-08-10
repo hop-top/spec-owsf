@@ -15,9 +15,13 @@ jobs:
       - name: Validate core schema JSON syntax
         run: jq . schemas/owsf-core-v0.1.schema.json >/dev/null
 
+      - name: Install check-jsonschema
+        run: pipx install check-jsonschema
+
       - name: Validate examples
         run: |
           set -euo pipefail
+          shopt -s nullglob
           files=(examples/*.json)
           if [ ${#files[@]} -eq 0 ]; then
             echo "No example JSON files found in examples/."
@@ -27,5 +31,6 @@ jobs:
           for f in "${files[@]}"; do
             echo "Validating $f"
             jq . "$f" >/dev/null
+            check-jsonschema --schemafile schemas/owsf-core-v0.1.schema.json "$f"
             python3 scripts/validate_owsf_semantics.py "$f"
           done
