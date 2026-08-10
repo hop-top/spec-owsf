@@ -20,6 +20,7 @@
   - [ ] strict-tree space topology (single parent, no cycles)
   - [ ] causal dependencies resolve and are acyclic
   - [ ] `lamport` causally consistent with `depends_on` (dependency `lamport` strictly less than dependent's)
+  - [ ] `fork` / `dispatched_from` `parent_doc_id` differs from `doc_id`
 
 ## Release
 

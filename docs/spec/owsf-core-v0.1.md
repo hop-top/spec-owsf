@@ -37,6 +37,7 @@ An OWSF core document `MUST` include:
 Optional top-level fields:
 
 - `fork`
+- `dispatched_from`
 - `writers`
 - `export`
 - `integrity`
@@ -121,7 +122,13 @@ Given identical OWSF input and identical ordering algorithm, replay `MUST` produ
 
 OWSF replay `MUST NOT` require hidden external state.
 
-## 8. Fork Model and No-Merge Invariant
+## 8. Lineage: Fork, Dispatch, and No-Merge Invariant
+
+Core defines two optional, single-valued lineage edges. Both are pure
+provenance metadata: they `MUST NOT` affect replay, and consumers `MUST NOT`
+require the referenced parent document to replay this document.
+
+### 8.1 Fork (continuation)
 
 Forking is allowed via optional `fork` metadata:
 
@@ -129,10 +136,28 @@ Forking is allowed via optional `fork` metadata:
 - explicit `parent_doc_id`
 - explicit `parent_event_id`
 
+A fork continues the parent's history: events up to `parent_event_id` are a
+shared prefix.
+
+### 8.2 Dispatch (causation)
+
+A document `MAY` declare optional `dispatched_from` metadata:
+
+- explicit `parent_doc_id` (the dispatching document)
+- explicit `parent_event_id` (the event, typically a tool call, that spawned this document)
+
+Dispatch records causation, not continuation: the child history is fresh and
+shares no prefix with the parent. `dispatched_from.parent_doc_id` `MUST NOT`
+equal the document's own `doc_id`. `fork` and `dispatched_from` are
+independent and `MAY` both be present.
+
+### 8.3 No-Merge Invariant
+
 Core OWSF prohibits merge semantics:
 
-- multi-parent lineage is invalid
+- multi-parent history lineage is invalid (`fork` is single-valued)
 - merged histories are out of scope
+- dispatch edges record provenance only; they do not compose histories
 
 ## 9. Export Profiles
 

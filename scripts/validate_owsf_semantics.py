@@ -8,6 +8,7 @@ Checks implemented:
 - strict-tree space topology (single parent, parent exists, acyclic)
 - causal dependencies resolve and are acyclic
 - lamport causal consistency (dependency lamport strictly less than dependent's)
+- lineage self-reference (fork/dispatched_from parent_doc_id differs from doc_id)
 """
 
 from __future__ import annotations
@@ -43,6 +44,18 @@ def validate(path: Path) -> int:
     if not isinstance(events, list):
         errors.append("events must be an array")
         return fail(errors)
+
+    # --- lineage checks ---
+    doc_id = data.get("doc_id")
+    for key in ("fork", "dispatched_from"):
+        link = data.get(key)
+        if link is None:
+            continue
+        if not isinstance(link, dict):
+            errors.append(f"{key} must be an object when present")
+            continue
+        if isinstance(doc_id, str) and doc_id and link.get("parent_doc_id") == doc_id:
+            errors.append(f"{key} parent_doc_id must differ from doc_id")
 
     # --- space checks ---
     space_ids: set[str] = set()
