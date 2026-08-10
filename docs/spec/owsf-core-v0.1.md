@@ -112,7 +112,7 @@ Consumers `MUST` compute canonical order deterministically from identical input:
 4. Tie-break by `seq` ascending.
 5. Tie-break by `event_id` lexicographically.
 
-If causal references are invalid (missing or cyclic), consumers `MUST` fail validation before replay.
+If causal references are invalid (missing, cyclic, or lamport-inconsistent), consumers `MUST` fail validation before replay. A causal reference is lamport-inconsistent when an event listed in `depends_on` does not have a `lamport` strictly less than the dependent event's `lamport`.
 
 ## 7. Replay Contract
 
