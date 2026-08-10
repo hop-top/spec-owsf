@@ -257,6 +257,7 @@
     "integrity": {
       "type": "object",
       "additionalProperties": false,
+      "minProperties": 1,
       "properties": {
         "manifest_hash": {
           "type": "string",
