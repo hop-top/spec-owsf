@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://owsf.dev/schemas/v0.1/profiles/hooks.schema.json",
+  "title": "OWSF Hooks Payload Profile",
+  "description": "Open payload profile for hook activity records. Applied in addition to the OWSF core schema; constrains only events[*].payload for registered event types. Unregistered event types are unconstrained.",
+  "type": "object",
+  "properties": {
+    "events": {
+      "items": {
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "hook.fired"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/hook_fired"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "hook.config"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/hook_config"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "hook.error"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/hook_error"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "raw": {
+      "type": "object"
+    },
+    "hook_fired": {
+      "type": "object",
+      "required": [
+        "hook"
+      ],
+      "properties": {
+        "hook": {
+          "type": "string",
+          "minLength": 1
+        },
+        "event": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "allow",
+            "warn",
+            "block",
+            "rewrite"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    },
+    "hook_config": {
+      "type": "object",
+      "required": [
+        "hooks"
+      ],
+      "properties": {
+        "hooks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "hook"
+            ],
+            "properties": {
+              "hook": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    },
+    "hook_error": {
+      "type": "object",
+      "required": [
+        "hook",
+        "error"
+      ],
+      "properties": {
+        "hook": {
+          "type": "string",
+          "minLength": 1
+        },
+        "error": {
+          "type": "string",
+          "minLength": 1
+        },
+        "event": {
+          "type": "string",
+          "minLength": 1
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    }
+  }
+}

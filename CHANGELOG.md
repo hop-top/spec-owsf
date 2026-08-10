@@ -11,6 +11,7 @@ All notable changes to OWSF will be documented in this file.
 - Integration note on crtx/stem layering (`docs/integration/stem-crtx.md`), including adapter concept mapping.
 - Core: optional `dispatched_from` lineage metadata (spec Section 8 restructured as fork = continuation, dispatch = causation); semantic validator rejects self-referential lineage.
 - agent-loop profile: `context.inject` event type (injection as event, preserving no-merge and self-contained replay) and optional `child_doc_id` on `tool.call`/`tool.result`.
+- hooks payload profile v0.1 (`docs/profiles/hooks-v0.1.md`, `schemas/profiles/`): `hook.fired`/`hook.config`/`hook.error` records aligned with the nerv hooks contract; worked example demonstrating open-profile composition with agent-loop.
 
 - CI: examples validated against the core JSON Schema (draft 2020-12) via `check-jsonschema`.
 - Semantic validator: `lamport` must be a non-negative integer per event.

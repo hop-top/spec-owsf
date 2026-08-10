@@ -1,0 +1,129 @@
+{
+  "owsf_version": "0.1",
+  "doc_id": "owsf_hooks_demo_2026_08_10_001",
+  "created_at": "2026-08-10T10:00:00Z",
+  "producer": {
+    "name": "wsm",
+    "version": "0.1.0"
+  },
+  "writers": [
+    {
+      "writer_id": "demo:agent"
+    },
+    {
+      "writer_id": "nerv:runtime"
+    }
+  ],
+  "spaces": [
+    {
+      "id": "root",
+      "type": "filesystem",
+      "parent": null,
+      "boundary": {
+        "kind": "local_path",
+        "ref": "/workspace"
+      },
+      "capabilities": [
+        "read",
+        "write"
+      ],
+      "trust_level": "trusted"
+    }
+  ],
+  "events": [
+    {
+      "event_id": "evt_001",
+      "writer_id": "nerv:runtime",
+      "space_id": "root",
+      "type": "hook.config",
+      "lamport": 1,
+      "seq": 1,
+      "timestamp": "2026-08-10T10:00:00Z",
+      "payload": {
+        "hooks": [
+          {
+            "hook": "block-dangerous-rm",
+            "event": "PreToolUse"
+          },
+          {
+            "hook": "audit-logger",
+            "event": "PostToolUse"
+          }
+        ]
+      }
+    },
+    {
+      "event_id": "evt_002",
+      "writer_id": "demo:agent",
+      "space_id": "root",
+      "type": "tool.call",
+      "lamport": 2,
+      "seq": 1,
+      "timestamp": "2026-08-10T10:00:05Z",
+      "payload": {
+        "tool": "run_shell",
+        "arguments": {
+          "command": "rm -rf /workspace/build"
+        },
+        "call_id": "call_001"
+      }
+    },
+    {
+      "event_id": "evt_003",
+      "writer_id": "nerv:runtime",
+      "space_id": "root",
+      "type": "hook.fired",
+      "lamport": 3,
+      "seq": 2,
+      "timestamp": "2026-08-10T10:00:05Z",
+      "depends_on": [
+        "evt_002"
+      ],
+      "payload": {
+        "hook": "block-dangerous-rm",
+        "event": "PreToolUse",
+        "action": "block",
+        "message": "recursive delete outside allowlist denied"
+      }
+    },
+    {
+      "event_id": "evt_004",
+      "writer_id": "demo:agent",
+      "space_id": "root",
+      "type": "tool.result",
+      "lamport": 4,
+      "seq": 2,
+      "timestamp": "2026-08-10T10:00:06Z",
+      "depends_on": [
+        "evt_002",
+        "evt_003"
+      ],
+      "payload": {
+        "status": "cancelled",
+        "call_id": "call_001",
+        "output": "blocked by hook: recursive delete outside allowlist denied"
+      }
+    },
+    {
+      "event_id": "evt_005",
+      "writer_id": "nerv:runtime",
+      "space_id": "root",
+      "type": "hook.error",
+      "lamport": 5,
+      "seq": 3,
+      "timestamp": "2026-08-10T10:00:06Z",
+      "depends_on": [
+        "evt_004"
+      ],
+      "payload": {
+        "hook": "audit-logger",
+        "error": "handler timeout after 5s",
+        "event": "PostToolUse"
+      }
+    }
+  ],
+  "export": {
+    "kind": "full",
+    "determinism": "full"
+  }
+}
