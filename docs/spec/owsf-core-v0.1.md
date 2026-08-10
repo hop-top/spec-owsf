@@ -41,7 +41,7 @@ Optional top-level fields:
 - `export`
 - `integrity`
 
-If `writers` is present, every event `writer_id` SHOULD reference a registered writer entry.
+If `writers` is present, every event `writer_id` `MUST` reference a registered writer entry.
 
 ### 3.1 Required Field Semantics
 
@@ -69,6 +69,7 @@ Each `space` `MUST` define:
 ### 4.1 Space Invariants
 
 - Space containment `MUST` form a strict tree (single parent per node).
+- A document `MUST` contain exactly one root space (`parent: null`).
 - `space.id`, `space.parent`, and `space.type` are immutable after creation.
 - Reparenting is prohibited. If topology changes materially, a new space must be introduced via events.
 - `boundary`: SHOULD be defined using OCSF Observable types (e.g., `file_path`, `process_id`, `container_id`) where applicable.
@@ -99,7 +100,7 @@ Optional:
 - Event log is append-only.
 - Historical events `MUST NOT` be edited or removed.
 - `event_id` must be unique within document.
-- `seq` must be monotonic per `writer_id`.
+- `seq` `MUST` be strictly increasing per `writer_id`.
 - `payload`: SHOULD utilize OCSF Event Class definitions for system-level activities (File, Network, Process, Registry) to ensure semantic interoperability.
 
 ## 6. Deterministic Ordering
