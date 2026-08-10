@@ -6,6 +6,10 @@ All notable changes to OWSF will be documented in this file.
 
 ### Added
 
+- agent-loop payload profile v0.1: open event-type registry and per-type payload contracts for agent-domain events (`docs/profiles/`, `schemas/profiles/`), with CI-validated worked example.
+- Bidirectional Claude Code session JSONL reference converter (`tools/convert_claude_jsonl.py`): lossless `payload.raw` capture, deterministic output, agent-loop profile payload fields; CI checks determinism and byte-identical round-trip.
+- Integration note on crtx/stem layering (`docs/integration/stem-crtx.md`).
+
 - CI: examples validated against the core JSON Schema (draft 2020-12) via `check-jsonschema`.
 - Semantic validator: `lamport` must be a non-negative integer per event.
 - Semantic validator: `lamport` causal consistency — dependency `lamport` strictly less than dependent's; matching normative rule in spec Section 6 and release-checklist item.
