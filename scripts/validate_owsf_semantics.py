@@ -4,8 +4,10 @@
 Checks implemented:
 - unique event_id
 - monotonic seq per writer_id
+- non-negative integer lamport per event
 - strict-tree space topology (single parent, parent exists, acyclic)
 - causal dependencies resolve and are acyclic
+- lamport causal consistency (dependency lamport strictly less than dependent's)
 """
 
 from __future__ import annotations
@@ -91,6 +93,7 @@ def validate(path: Path) -> int:
     # --- event checks ---
     event_ids: set[str] = set()
     seq_by_writer: dict[str, int] = defaultdict(lambda: -1)
+    lamport_by_event: dict[str, int] = {}
     writer_registry: set[str] = set()
 
     if writers is not None:
@@ -118,6 +121,7 @@ def validate(path: Path) -> int:
         writer = e.get("writer_id")
         space_id = e.get("space_id")
         seq = e.get("seq")
+        lamport = e.get("lamport")
 
         if not isinstance(eid, str) or not eid:
             errors.append(f"events[{idx}] missing valid event_id")
@@ -145,6 +149,11 @@ def validate(path: Path) -> int:
                 )
             seq_by_writer[writer] = seq
 
+        if not isinstance(lamport, int) or lamport < 0:
+            errors.append(f"event {eid} missing non-negative integer lamport")
+        else:
+            lamport_by_event[eid] = lamport
+
         depends = e.get("depends_on", [])
         if depends is None:
             depends = []
@@ -164,6 +173,19 @@ def validate(path: Path) -> int:
         for dep in dep_list:
             if dep not in event_ids:
                 errors.append(f"event {eid} depends on missing event {dep}")
+
+    # lamport causal consistency
+    for eid, dep_list in deps.items():
+        if eid not in lamport_by_event:
+            continue
+        for dep in dep_list:
+            if dep not in lamport_by_event:
+                continue
+            if lamport_by_event[dep] >= lamport_by_event[eid]:
+                errors.append(
+                    f"event {eid} lamport {lamport_by_event[eid]} not greater than "
+                    f"dependency {dep} lamport {lamport_by_event[dep]}"
+                )
 
     # dependency cycle detection
     visiting_events: set[str] = set()

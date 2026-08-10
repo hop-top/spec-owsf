@@ -19,6 +19,7 @@
   - [ ] monotonic `seq` per `writer_id`
   - [ ] strict-tree space topology (single parent, no cycles)
   - [ ] causal dependencies resolve and are acyclic
+  - [ ] `lamport` causally consistent with `depends_on` (dependency `lamport` strictly less than dependent's)
 
 ## Release
 
