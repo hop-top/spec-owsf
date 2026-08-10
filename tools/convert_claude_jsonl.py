@@ -32,6 +32,12 @@ record verbatim, and the reverse pass re-serializes ``payload.raw`` (compact
 separators, ``ensure_ascii=False``) one record per line in lamport order.
 Output is deterministic: no randomness, no wall-clock reads.
 
+Payloads for registry event types carry the agent-loop profile's structured
+fields (``docs/profiles/agent-loop-v0.1.md``) extracted from the record —
+``content`` for messages, ``tool``/``call_id``/``arguments`` for tool.call,
+``status``/``call_id``/``output`` for tool.result, ``summary`` for
+context.summary — with ``raw`` remaining authoritative.
+
 Mapping invariants:
     - doc_id derived from sessionId (or content hash when absent)
     - created_at = first record timestamp, normalized to RFC3339 Z
@@ -119,25 +125,80 @@ def writer_for(record):
     return "claude-code:system"
 
 
+def text_content(record):
+    message = record.get("message")
+    if not isinstance(message, dict):
+        content = record.get("content")
+        if isinstance(content, str):
+            return content
+        subtype = record.get("subtype")
+        return subtype if isinstance(subtype, str) else ""
+    content = message.get("content")
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = [
+            b.get("text")
+            for b in content
+            if isinstance(b, dict)
+            and b.get("type") == "text"
+            and isinstance(b.get("text"), str)
+        ]
+        return "".join(parts)
+    return ""
+
+
+def message_blocks(record, block_type):
+    message = record.get("message")
+    if not isinstance(message, dict):
+        return []
+    content = message.get("content")
+    if not isinstance(content, list):
+        return []
+    return [b for b in content if isinstance(b, dict) and b.get("type") == block_type]
+
+
 def build_payload(record, event_type):
     payload = {"raw": record}
     message = record.get("message")
     if isinstance(message, dict) and isinstance(message.get("role"), str):
         payload["role"] = message["role"]
-    if event_type == "tool.call":
-        names = [
-            b.get("name")
-            for b in message.get("content", [])
-            if isinstance(b, dict) and b.get("type") == "tool_use"
-        ]
-        payload["tools"] = [n for n in names if isinstance(n, str)]
+    if event_type in ("message.user", "message.assistant", "message.system"):
+        payload["content"] = text_content(record)
+        if event_type == "message.assistant":
+            model = message.get("model") if isinstance(message, dict) else None
+            if isinstance(model, str):
+                payload["model"] = model
+            stop_reason = message.get("stop_reason") if isinstance(message, dict) else None
+            if isinstance(stop_reason, str):
+                payload["stop_reason"] = stop_reason
+    elif event_type == "tool.call":
+        blocks = message_blocks(record, "tool_use")
+        names = [b.get("name") for b in blocks if isinstance(b.get("name"), str)]
+        if names:
+            payload["tool"] = names[0]
+        ids = [b.get("id") for b in blocks if isinstance(b.get("id"), str)]
+        if ids:
+            payload["call_id"] = ids[0]
+        if blocks and isinstance(blocks[0].get("input"), dict):
+            payload["arguments"] = blocks[0]["input"]
+        payload["tools"] = names
     elif event_type == "tool.result":
-        ids = [
-            b.get("tool_use_id")
-            for b in message.get("content", [])
-            if isinstance(b, dict) and b.get("type") == "tool_result"
+        blocks = message_blocks(record, "tool_result")
+        if blocks:
+            payload["status"] = "error" if blocks[0].get("is_error") is True else "success"
+            block_id = blocks[0].get("tool_use_id")
+            if isinstance(block_id, str):
+                payload["call_id"] = block_id
+            if "content" in blocks[0]:
+                payload["output"] = blocks[0]["content"]
+        payload["tool_use_ids"] = [
+            b.get("tool_use_id") for b in blocks if isinstance(b.get("tool_use_id"), str)
         ]
-        payload["tool_use_ids"] = [i for i in ids if isinstance(i, str)]
+    elif event_type == "context.summary":
+        summary = record.get("summary")
+        if isinstance(summary, str) and summary:
+            payload["summary"] = summary
     return payload
 
 

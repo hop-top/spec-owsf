@@ -38,5 +38,17 @@ jobs:
             python3 scripts/validate_owsf_semantics.py "$f"
           done
 
-      - name: Validate agent-loop profile example
-        run: check-jsonschema --schemafile schemas/profiles/agent-loop-v0.1.schema.json examples/agent-loop-owsf.json
+      - name: Validate agent-loop profile examples
+        run: |
+          check-jsonschema --schemafile schemas/profiles/agent-loop-v0.1.schema.json \
+            examples/agent-loop-owsf.json \
+            examples/claude-code-session-owsf.json
+
+      - name: Converter determinism and round-trip
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          python3 tools/convert_claude_jsonl.py tools/testdata/sample-session.jsonl -o "$tmp/artifact.json"
+          diff "$tmp/artifact.json" examples/claude-code-session-owsf.json
+          python3 tools/convert_claude_jsonl.py --reverse "$tmp/artifact.json" -o "$tmp/roundtrip.jsonl"
+          cmp "$tmp/roundtrip.jsonl" tools/testdata/sample-session.jsonl

@@ -63,7 +63,8 @@
           "uuid": "e1a1c0de-0001-4abc-9def-000000000001",
           "timestamp": "2026-08-01T12:00:02.000Z"
         },
-        "role": "user"
+        "role": "user",
+        "content": "Create utils.py with a hello() function that returns the string \"hello\"."
       }
     },
     {
@@ -113,7 +114,9 @@
           "uuid": "e1a1c0de-0002-4abc-9def-000000000002",
           "timestamp": "2026-08-01T12:00:04.000Z"
         },
-        "role": "assistant"
+        "role": "assistant",
+        "content": "I'll create utils.py with a hello() function.",
+        "model": "claude-sonnet-4-5"
       }
     },
     {
@@ -172,6 +175,12 @@
           "timestamp": "2026-08-01T12:00:06.000Z"
         },
         "role": "assistant",
+        "tool": "Write",
+        "call_id": "toolu_01Synth0000000000000001",
+        "arguments": {
+          "file_path": "/home/dev/demo-project/utils.py",
+          "content": "def hello():\n    return \"hello\"\n"
+        },
         "tools": [
           "Write"
         ]
@@ -216,6 +225,9 @@
           "timestamp": "2026-08-01T12:00:08.000Z"
         },
         "role": "user",
+        "status": "success",
+        "call_id": "toolu_01Synth0000000000000001",
+        "output": "File created successfully at: /home/dev/demo-project/utils.py",
         "tool_use_ids": [
           "toolu_01Synth0000000000000001"
         ]
@@ -268,7 +280,10 @@
           "uuid": "e1a1c0de-0005-4abc-9def-000000000005",
           "timestamp": "2026-08-01T12:00:10.000Z"
         },
-        "role": "assistant"
+        "role": "assistant",
+        "content": "Created utils.py with hello() returning \"hello\".",
+        "model": "claude-sonnet-4-5",
+        "stop_reason": "end_turn"
       }
     },
     {
@@ -300,7 +315,8 @@
           "pendingBackgroundAgentCount": 0,
           "uuid": "e1a1c0de-0006-4abc-9def-000000000006",
           "timestamp": "2026-08-01T12:00:12.000Z"
-        }
+        },
+        "content": "turn_duration"
       }
     },
     {
@@ -335,7 +351,8 @@
           "uuid": "e1a1c0de-0007-4abc-9def-000000000007",
           "timestamp": "2026-08-01T12:00:14.000Z"
         },
-        "role": "user"
+        "role": "user",
+        "content": "Thanks. Now add a goodbye() function too."
       }
     },
     {
@@ -385,7 +402,10 @@
           "uuid": "e1a1c0de-0008-4abc-9def-000000000008",
           "timestamp": "2026-08-01T12:00:16.000Z"
         },
-        "role": "assistant"
+        "role": "assistant",
+        "content": "Added goodbye() to utils.py.",
+        "model": "claude-sonnet-4-5",
+        "stop_reason": "end_turn"
       }
     },
     {
