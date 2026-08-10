@@ -380,8 +380,7 @@
     "context_summary": {
       "type": "object",
       "required": [
-        "summary",
-        "covers"
+        "summary"
       ],
       "properties": {
         "summary": {

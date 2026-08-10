@@ -109,9 +109,9 @@ Each step object requires `title` (string) and `status` (string enum: `pending`,
 | Field | Required | Type | Meaning |
 |---|---|---|---|
 | `summary` | yes | string | Summary text. |
-| `covers` | yes | object | Range summarized: `from_event_id` and `to_event_id` (both required strings), inclusive, in canonical order (core Section 6). |
+| `covers` | no | object | Range summarized: `from_event_id` and `to_event_id` (both required strings when present), inclusive, in canonical order (core Section 6). |
 
-Both fields are required: a summary without its covered range cannot substitute for the summarized events during replay. Consumers `SHOULD` verify the referenced events exist; JSON Schema cannot.
+`covers` is `OPTIONAL`: many source formats do not record the summarized range, and producers `MUST NOT` fabricate one. Producers `SHOULD` emit `covers` when the range is known. A summary without `covers` is annotative only and `MUST NOT` substitute for the summarized events during replay; when `covers` is present, consumers `MAY` treat the summary as standing in for that range. Consumers `SHOULD` verify the referenced events exist; JSON Schema cannot.
 
 ### 5.8 `topology.space_create`
 
