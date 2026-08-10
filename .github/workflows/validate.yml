@@ -15,6 +15,9 @@ jobs:
       - name: Validate core schema JSON syntax
         run: jq . schemas/owsf-core-v0.1.schema.json >/dev/null
 
+      - name: Validate agent-loop profile schema JSON syntax
+        run: jq . schemas/profiles/agent-loop-v0.1.schema.json >/dev/null
+
       - name: Install check-jsonschema
         run: pipx install check-jsonschema
 
@@ -34,3 +37,6 @@ jobs:
             check-jsonschema --schemafile schemas/owsf-core-v0.1.schema.json "$f"
             python3 scripts/validate_owsf_semantics.py "$f"
           done
+
+      - name: Validate agent-loop profile example
+        run: check-jsonschema --schemafile schemas/profiles/agent-loop-v0.1.schema.json examples/agent-loop-owsf.json

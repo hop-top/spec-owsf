@@ -1,0 +1,429 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://owsf.dev/schemas/v0.1/profiles/agent-loop.schema.json",
+  "title": "OWSF Agent-Loop Payload Profile",
+  "description": "Open payload profile for agent-loop events. Applied in addition to the OWSF core schema; constrains only events[*].payload for registered event types. Unregistered event types are unconstrained.",
+  "type": "object",
+  "properties": {
+    "events": {
+      "items": {
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "session.start"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/session_start"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "session.end"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/session_end"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "message.user"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/message_user"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "message.assistant"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/message_assistant"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "message.system"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/message_system"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "tool.call"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/tool_call"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "tool.result"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/tool_result"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "plan.update"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/plan_update"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "context.summary"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/context_summary"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "topology.space_create"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "payload": {
+                  "$ref": "#/$defs/topology_space_create"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "raw": {
+      "type": "object"
+    },
+    "session_start": {
+      "type": "object",
+      "required": [
+        "session_id"
+      ],
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    },
+    "session_end": {
+      "type": "object",
+      "required": [
+        "reason"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    },
+    "message_user": {
+      "type": "object",
+      "required": [
+        "content"
+      ],
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    },
+    "message_assistant": {
+      "type": "object",
+      "required": [
+        "content"
+      ],
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "stop_reason": {
+          "type": "string"
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    },
+    "message_system": {
+      "type": "object",
+      "required": [
+        "content"
+      ],
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    },
+    "tool_call": {
+      "type": "object",
+      "required": [
+        "tool"
+      ],
+      "properties": {
+        "tool": {
+          "type": "string",
+          "minLength": 1
+        },
+        "arguments": {
+          "type": "object"
+        },
+        "call_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    },
+    "tool_result": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error",
+            "timeout",
+            "cancelled"
+          ]
+        },
+        "output": {},
+        "call_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    },
+    "plan_update": {
+      "type": "object",
+      "required": [
+        "steps"
+      ],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "title",
+              "status"
+            ],
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "in_progress",
+                  "completed",
+                  "skipped"
+                ]
+              }
+            }
+          }
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    },
+    "context_summary": {
+      "type": "object",
+      "required": [
+        "summary",
+        "covers"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "covers": {
+          "type": "object",
+          "required": [
+            "from_event_id",
+            "to_event_id"
+          ],
+          "properties": {
+            "from_event_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "to_event_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    },
+    "topology_space_create": {
+      "type": "object",
+      "properties": {
+        "space_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "note": {
+          "type": "string"
+        },
+        "raw": {
+          "$ref": "#/$defs/raw"
+        }
+      }
+    }
+  }
+}
