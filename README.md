@@ -48,3 +48,16 @@ is unversioned tooling and governance.
 ## Contributing
 
 See `CONTRIBUTING.md`.
+
+Local checks mirror CI:
+
+```
+make hooks         # route git hooks at .githooks/ (once)
+make check-tools   # report missing dependencies
+make ci            # everything CI runs
+```
+
+## License
+
+Dual-licensed: spec and docs prose under CC-BY-4.0; schemas, examples, and
+tooling under MIT. See `LICENSE`.

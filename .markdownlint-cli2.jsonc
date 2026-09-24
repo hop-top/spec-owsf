@@ -1,0 +1,35 @@
+// markdownlint-cli2 config for spec-owsf.
+//
+// Lint prose for quality but permit:
+//   - long lines (normative clauses cite field names inline; wrapping hurts
+//     diffability of spec text)
+//   - inline HTML (GitHub alert blocks > [!NOTE])
+//   - non-aligned tables (payload field tables grow rows; alignment churns
+//     the file on every addition)
+//   - missing blank lines around headings/lists in CHANGELOG
+//     (Keep-a-Changelog layout)
+//   - fenced blocks without a language (notation snippets)
+//   - duplicate headings (both profiles repeat ### 5.N per registry entry —
+//     structural, not a defect)
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD014": false,
+    "MD022": false,
+    "MD024": false,
+    "MD032": false,
+    "MD033": false,
+    "MD040": false,
+    "MD041": false,
+    "MD060": false
+  },
+  "globs": [
+    "**/*.md"
+  ],
+  "ignores": [
+    "node_modules",
+    "specs/v*/examples/**",
+    "specs/v*/CHANGELOG.md"
+  ]
+}

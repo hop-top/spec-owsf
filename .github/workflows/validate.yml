@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -12,53 +15,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate core schema JSON syntax
-        run: jq . specs/v1.0/schemas/core.schema.json >/dev/null
-
-      - name: Validate agent-loop profile schema JSON syntax
-        run: jq . specs/v1.0/schemas/profiles/agent-loop.schema.json >/dev/null
-
-      - name: Validate hooks profile schema JSON syntax
-        run: jq . specs/v1.0/schemas/profiles/hooks.schema.json >/dev/null
-
       - name: Install check-jsonschema
         run: pipx install check-jsonschema
 
-      - name: Validate examples
-        run: |
-          set -euo pipefail
-          shopt -s nullglob
-          files=(specs/v1.0/examples/*.json)
-          if [ ${#files[@]} -eq 0 ]; then
-            echo "No example JSON files found in specs/v1.0/examples/."
-            exit 1
-          fi
+      - name: Schema JSON syntax
+        run: make lint-schemas
 
-          for f in "${files[@]}"; do
-            echo "Validating $f"
-            jq . "$f" >/dev/null
-            check-jsonschema --schemafile specs/v1.0/schemas/core.schema.json "$f"
-            python3 scripts/validate_owsf_semantics.py "$f"
-          done
+      - name: Examples (core schema + semantic validation)
+        run: make validate-examples
 
-      - name: Validate agent-loop profile examples
-        run: |
-          check-jsonschema --schemafile specs/v1.0/schemas/profiles/agent-loop.schema.json \
-            specs/v1.0/examples/agent-loop-owsf.json \
-            specs/v1.0/examples/claude-code-session-owsf.json
-
-      - name: Validate hooks profile example (composed with agent-loop)
-        run: |
-          check-jsonschema --schemafile specs/v1.0/schemas/profiles/hooks.schema.json \
-            specs/v1.0/examples/hooks-owsf.json
-          check-jsonschema --schemafile specs/v1.0/schemas/profiles/agent-loop.schema.json \
-            specs/v1.0/examples/hooks-owsf.json
+      - name: Profile schemas (including composition)
+        run: make validate-profiles
 
       - name: Converter determinism and round-trip
-        run: |
-          set -euo pipefail
-          tmp="$(mktemp -d)"
-          python3 tools/convert_claude_jsonl.py tools/testdata/sample-session.jsonl -o "$tmp/artifact.json"
-          diff "$tmp/artifact.json" specs/v1.0/examples/claude-code-session-owsf.json
-          python3 tools/convert_claude_jsonl.py --reverse "$tmp/artifact.json" -o "$tmp/roundtrip.jsonl"
-          cmp "$tmp/roundtrip.jsonl" tools/testdata/sample-session.jsonl
+        run: make converter
+
+  lint-md:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Markdown lint
+        run: make lint-md
