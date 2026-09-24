@@ -1,11 +1,11 @@
 # CLEAR Integration Note
 
-This note describes one integration profile where a CLEAR contract includes workspace context in `input_payload` (optional at protocol level, template-dependent in practice):
+This note describes one integration profile where a CLEAR (<https://clear.style>) contract includes workspace context in `input_payload` (optional at protocol level, template-dependent in practice):
 
 - `workspace` (opaque identifier), or
 - `workspace_ref` (resolvable reference)
 
-For WSM-backed flows, one profile is:
+For WSM (<https://hop.top/wsm>) backed flows, one profile is:
 
 - `workspace_ref = "wsm://workspace/<workspace_id>"`
 

@@ -1,9 +1,9 @@
-# OWSF Hooks Payload Profile v0.1
+# OWSF Hooks Payload Profile v1.0
 
-Status: Draft  
+Status: Released  
 Normative keywords in this document use RFC 2119 semantics: `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT`, `MAY`.
 
-This profile layers on the OWSF Core Specification v0.1 (`docs/spec/owsf-core-v0.1.md`). It alters no core requirement.
+This profile layers on the OWSF Core Specification v1.0 (`../core.md`). It alters no core requirement.
 
 ## 1. Purpose
 
@@ -12,10 +12,10 @@ Reactive machinery — hooks, handlers, guardrails — is runtime territory and 
 ## 2. Profile Identifier and Versioning
 
 - Profile identifier: `hooks`
-- Profile version: `0.1`
-- Machine-readable schema: `schemas/profiles/hooks-v0.1.schema.json`
+- Profile version: `1.0`
+- Machine-readable schema: `../schemas/profiles/hooks.schema.json`
 
-Versioning follows `docs/governance/versioning-policy.md`. Adding optional payload fields or new registry types is a `MINOR` change; removing or re-typing a required payload field, or removing a registry type, is a `MAJOR` change.
+Versioning follows `../../../docs/governance/versioning-policy.md`. Adding optional payload fields or new registry types is a `MINOR` change; removing or re-typing a required payload field, or removing a registry type, is a `MAJOR` change.
 
 ## 3. Conformance and Composition
 
@@ -74,7 +74,7 @@ Every registered payload schema allows an optional `raw` object: a verbatim pass
 
 ## 7. Relationship to nerv
 
-This profile is protocol-neutral: any hooks runtime can produce conforming events. The reference hooks contract is nerv (`hop-top/poly-nerv`). Producers recording nerv activity `SHOULD` use nerv event registry names in `event` (e.g. `PreToolUse`, `PostToolUse`, `SessionStart`) and `SHOULD` map `action` from the nerv handler contract's decision vocabulary, which this profile's enum mirrors. Wiring shape inside `hook.config` entries `MAY` follow nerv's hook definition schema.
+This profile is protocol-neutral: any hooks runtime can produce conforming events. The reference hooks contract is nerv (<https://hop.top/nerv>). Producers recording nerv activity `SHOULD` use nerv event registry names in `event` (e.g. `PreToolUse`, `PostToolUse`, `SessionStart`) and `SHOULD` map `action` from the nerv handler contract's decision vocabulary, which this profile's enum mirrors. Wiring shape inside `hook.config` entries `MAY` follow nerv's hook definition schema.
 
 ## 8. Schema Application
 
@@ -82,4 +82,4 @@ The profile schema is a single whole-document schema that constrains only `event
 
 ## 9. Worked Example
 
-`examples/hooks-owsf.json` records a guardrail in action: a `hook.config` snapshot, a `tool.call` (agent-loop type, untouched by this profile), a `hook.fired` with `action: block` depending on that call, the cancelled `tool.result`, and a `hook.error` from an unrelated fail-open handler. It is valid against the core schema, the semantic validator, this profile, and the agent-loop profile — demonstrating composition.
+`../examples/hooks-owsf.json` records a guardrail in action: a `hook.config` snapshot, a `tool.call` (agent-loop type, untouched by this profile), a `hook.fired` with `action: block` depending on that call, the cancelled `tool.result`, and a `hook.error` from an unrelated fail-open handler. It is valid against the core schema, the semantic validator, this profile, and the agent-loop profile — demonstrating composition.

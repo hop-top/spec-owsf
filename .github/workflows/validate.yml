@@ -13,13 +13,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate core schema JSON syntax
-        run: jq . schemas/owsf-core-v0.1.schema.json >/dev/null
+        run: jq . specs/v1.0/schemas/core.schema.json >/dev/null
 
       - name: Validate agent-loop profile schema JSON syntax
-        run: jq . schemas/profiles/agent-loop-v0.1.schema.json >/dev/null
+        run: jq . specs/v1.0/schemas/profiles/agent-loop.schema.json >/dev/null
 
       - name: Validate hooks profile schema JSON syntax
-        run: jq . schemas/profiles/hooks-v0.1.schema.json >/dev/null
+        run: jq . specs/v1.0/schemas/profiles/hooks.schema.json >/dev/null
 
       - name: Install check-jsonschema
         run: pipx install check-jsonschema
@@ -28,37 +28,37 @@ jobs:
         run: |
           set -euo pipefail
           shopt -s nullglob
-          files=(examples/*.json)
+          files=(specs/v1.0/examples/*.json)
           if [ ${#files[@]} -eq 0 ]; then
-            echo "No example JSON files found in examples/."
+            echo "No example JSON files found in specs/v1.0/examples/."
             exit 1
           fi
 
           for f in "${files[@]}"; do
             echo "Validating $f"
             jq . "$f" >/dev/null
-            check-jsonschema --schemafile schemas/owsf-core-v0.1.schema.json "$f"
+            check-jsonschema --schemafile specs/v1.0/schemas/core.schema.json "$f"
             python3 scripts/validate_owsf_semantics.py "$f"
           done
 
       - name: Validate agent-loop profile examples
         run: |
-          check-jsonschema --schemafile schemas/profiles/agent-loop-v0.1.schema.json \
-            examples/agent-loop-owsf.json \
-            examples/claude-code-session-owsf.json
+          check-jsonschema --schemafile specs/v1.0/schemas/profiles/agent-loop.schema.json \
+            specs/v1.0/examples/agent-loop-owsf.json \
+            specs/v1.0/examples/claude-code-session-owsf.json
 
       - name: Validate hooks profile example (composed with agent-loop)
         run: |
-          check-jsonschema --schemafile schemas/profiles/hooks-v0.1.schema.json \
-            examples/hooks-owsf.json
-          check-jsonschema --schemafile schemas/profiles/agent-loop-v0.1.schema.json \
-            examples/hooks-owsf.json
+          check-jsonschema --schemafile specs/v1.0/schemas/profiles/hooks.schema.json \
+            specs/v1.0/examples/hooks-owsf.json
+          check-jsonschema --schemafile specs/v1.0/schemas/profiles/agent-loop.schema.json \
+            specs/v1.0/examples/hooks-owsf.json
 
       - name: Converter determinism and round-trip
         run: |
           set -euo pipefail
           tmp="$(mktemp -d)"
           python3 tools/convert_claude_jsonl.py tools/testdata/sample-session.jsonl -o "$tmp/artifact.json"
-          diff "$tmp/artifact.json" examples/claude-code-session-owsf.json
+          diff "$tmp/artifact.json" specs/v1.0/examples/claude-code-session-owsf.json
           python3 tools/convert_claude_jsonl.py --reverse "$tmp/artifact.json" -o "$tmp/roundtrip.jsonl"
           cmp "$tmp/roundtrip.jsonl" tools/testdata/sample-session.jsonl

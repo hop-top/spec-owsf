@@ -11,7 +11,7 @@
 
 1. Describe the change and rationale.
 2. Identify compatibility impact (`major`, `minor`, `patch`).
-3. Update `schemas/` and `examples/` when behavior changes.
+3. Update `specs/<version>/schemas/` and `specs/<version>/examples/` when behavior changes.
 4. Update `CHANGELOG.md`.
 5. Run `scripts/validate_owsf_semantics.py` on modified examples.
 

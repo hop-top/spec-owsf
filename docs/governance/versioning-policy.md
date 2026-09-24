@@ -33,6 +33,6 @@ Non-breaking examples:
 
 For every spec release:
 
-- `docs/spec/` and `schemas/` MUST be updated together when normative behavior changes.
-- `examples/` MUST include at least one valid artifact for the released schema.
+- `specs/<version>/` spec text and `specs/<version>/schemas/` MUST be updated together when normative behavior changes.
+- `specs/<version>/examples/` MUST include at least one valid artifact for the released schema.
 - If schema and spec diverge, release is blocked.

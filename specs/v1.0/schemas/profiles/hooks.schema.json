@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://owsf.dev/schemas/v0.1/profiles/hooks.schema.json",
+  "$id": "https://owsf.dev/schemas/v1.0/profiles/hooks.schema.json",
   "title": "OWSF Hooks Payload Profile",
   "description": "Open payload profile for hook activity records. Applied in addition to the OWSF core schema; constrains only events[*].payload for registered event types. Unregistered event types are unconstrained.",
   "type": "object",

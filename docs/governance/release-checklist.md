@@ -2,9 +2,9 @@
 
 ## Pre-Release
 
-- [ ] Spec changes finalized in `docs/spec/`
-- [ ] Schema changes finalized in `schemas/`
-- [ ] Examples updated in `examples/`
+- [ ] Spec changes finalized in `specs/<version>/`
+- [ ] Schema changes finalized in `specs/<version>/schemas/`
+- [ ] Examples updated in `specs/<version>/examples/`
 - [ ] Compatibility impact assessed (`major` / `minor` / `patch`)
 - [ ] Changelog entry added
 
@@ -25,5 +25,5 @@
 ## Release
 
 - [ ] Version number updated where required
-- [ ] Tag created (`vX.Y.Z`)
+- [ ] Tag created (`owsf-<version>/vX.Y.Z`)
 - [ ] Release notes published

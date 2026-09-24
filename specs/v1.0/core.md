@@ -1,6 +1,6 @@
-# OWSF Core Specification v0.1
+# OWSF Core Specification v1.0
 
-Status: Draft  
+Status: Released  
 Normative keywords in this document use RFC 2119 semantics: `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT`, `MAY`.
 
 ## 1. Purpose
@@ -197,7 +197,7 @@ Schema pass alone does not imply full conformance.
 
 Versioning policy is defined in:
 
-- `docs/governance/versioning-policy.md`
+- `../../docs/governance/versioning-policy.md`
 
 ## 13. Framework Interoperability (OCSF & OASF)
 

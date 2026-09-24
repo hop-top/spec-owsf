@@ -1,9 +1,9 @@
-# OWSF Agent-Loop Payload Profile v0.1
+# OWSF Agent-Loop Payload Profile v1.0
 
-Status: Draft  
+Status: Released  
 Normative keywords in this document use RFC 2119 semantics: `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT`, `MAY`.
 
-This profile layers on the OWSF Core Specification v0.1 (`docs/spec/owsf-core-v0.1.md`). It alters no core requirement.
+This profile layers on the OWSF Core Specification v1.0 (`../core.md`). It alters no core requirement.
 
 ## 1. Purpose
 
@@ -12,12 +12,12 @@ OWSF core leaves `events[*].payload` unconstrained: artifacts replay determinist
 ## 2. Profile Identifier and Versioning
 
 - Profile identifier: `agent-loop`
-- Profile version: `0.1`
-- Machine-readable schema: `schemas/profiles/agent-loop-v0.1.schema.json`
+- Profile version: `1.0`
+- Machine-readable schema: `../schemas/profiles/agent-loop.schema.json`
 
-Versioning follows `docs/governance/versioning-policy.md`. Adding optional payload fields or new registry types is a `MINOR` change; removing or re-typing a required payload field, or removing a registry type, is a `MAJOR` change.
+Versioning follows `../../../docs/governance/versioning-policy.md`. Adding optional payload fields or new registry types is a `MINOR` change; removing or re-typing a required payload field, or removing a registry type, is a `MAJOR` change.
 
-Core v0.1 documents are closed at the top level, so this profile defines no in-document declaration field. Profile application is an out-of-band contract between producer and consumer.
+Core v1.0 documents are closed at the top level, so this profile defines no in-document declaration field. Profile application is an out-of-band contract between producer and consumer.
 
 ## 3. Conformance
 
@@ -151,4 +151,4 @@ The profile schema is a single whole-document schema that constrains only `event
 
 ## 9. Worked Example
 
-`examples/agent-loop-owsf.json` records a complete loop — `session.start`, a `context.inject` carrying prior-session context, a user/assistant exchange, a tool call and result, a plan update, a context summary, `session.end` — plus the root `topology.space_create` event. The document itself declares `dispatched_from` (core Section 8.2). It is valid against the core schema, the semantic validator, and this profile.
+`../examples/agent-loop-owsf.json` records a complete loop — `session.start`, a `context.inject` carrying prior-session context, a user/assistant exchange, a tool call and result, a plan update, a context summary, `session.end` — plus the root `topology.space_create` event. The document itself declares `dispatched_from` (core Section 8.2). It is valid against the core schema, the semantic validator, and this profile.

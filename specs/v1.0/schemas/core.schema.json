@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://owsf.dev/schemas/v0.1/owsf-core.schema.json",
+  "$id": "https://owsf.dev/schemas/v1.0/core.schema.json",
   "title": "OWSF Core Document",
   "type": "object",
   "additionalProperties": false,
@@ -15,7 +15,7 @@
   "properties": {
     "owsf_version": {
       "type": "string",
-      "const": "0.1"
+      "const": "1.0"
     },
     "doc_id": {
       "type": "string",

@@ -1,7 +1,8 @@
 # stem / crtx Integration Note
 
-crtx is a cross-CLI session envelope format; stem is its runtime. Sessions
-from agent CLIs normalize to crtx envelopes for interchange and resume.
+crtx (<https://hop.top/crtx>) is a cross-CLI session envelope format; stem
+(<https://hop.top/stem>) is its runtime. Sessions from agent CLIs normalize to
+crtx envelopes for interchange and resume.
 
 OWSF and crtx occupy different layers:
 

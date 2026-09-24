@@ -33,7 +33,7 @@ separators, ``ensure_ascii=False``) one record per line in lamport order.
 Output is deterministic: no randomness, no wall-clock reads.
 
 Payloads for registry event types carry the agent-loop profile's structured
-fields (``docs/profiles/agent-loop-v0.1.md``) extracted from the record —
+fields (``specs/v1.0/profiles/agent-loop.md``) extracted from the record —
 ``content`` for messages, ``tool``/``call_id``/``arguments`` for tool.call,
 ``status``/``call_id``/``output`` for tool.result, ``summary`` for
 context.summary — with ``raw`` remaining authoritative.
@@ -289,7 +289,7 @@ def forward(jsonl_text):
         events.append(event)
 
     return {
-        "owsf_version": "0.1",
+        "owsf_version": "1.0",
         "doc_id": doc_id,
         "created_at": created_at,
         "producer": {"name": PRODUCER_NAME, "version": PRODUCER_VERSION},
